@@ -17,17 +17,16 @@ $go = "go"
 $env:GOARCH = $arch
 $env:GOOS = $os
 $env:CGO_ENABLED = "1"
-$outputPath = "../bin/$($os)/$($arch)"
-
-Write-Host "Building for '$($os)' $($arch)"
-Write-Host "Output: " $outputPath
+$outputPath = "../../runtimes/"
 
 
 switch ($os) {
     "linux" { 
+        $outputPath += "linux-x64"
         $libname += ".so"
     }
     "windows" { 
+        $outputPath += "win-x64"
         $libname += ".dll"
     }
     "osx" {
@@ -36,6 +35,10 @@ switch ($os) {
 }
 
 $buildflags = 'build', "-o", "$($outputPath)/$($libname)",  '-buildmode=c-shared', '-ldflags', '-s -w' 
+
+Write-Host "Building for '$($os)' $($arch)"
+Write-Host "Output: " $outputPath
+
 
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 

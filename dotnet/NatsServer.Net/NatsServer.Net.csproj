@@ -1,9 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<Nullable>enable</Nullable>
+		<Langversion>9.0</Langversion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>NatsServer.Net</PackageId>
+		<Version>0.1.0</Version>
+		<Authors>Niklas Petersen</Authors>
+		<Owners>Niklas Petersen</Owners>
+		<Description>Embedded Nats Server</Description>
+		<Copyright>Copyright ​ Niklas Petersen 2021</Copyright>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<Title>NatsServer.Net</Title>
+		<PackageProjectUrl>https://github.com/niklasfp/dotnet-nats-server</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/niklasfp/dotnet-nats-server</RepositoryUrl>
+		<RepositoryType></RepositoryType>
+		<PackageTags>nats, nats.io, jetstream, messaging, pubsub</PackageTags>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<IncludeSymbols>True</IncludeSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../../runtimes/win-x64/*" CopyToOutputDirectory="Always" Pack="true" PackagePath="runtimes/win-x64/native" />
+		<None Include="../../runtimes/linux-x64/*" CopyToOutputDirectory="Always" Pack="true" PackagePath="runtimes/linux-x64/native" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+	</ItemGroup>
 
 </Project>
