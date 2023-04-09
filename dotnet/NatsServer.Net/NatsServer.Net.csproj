@@ -4,6 +4,7 @@
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<Nullable>enable</Nullable>
 		<Langversion>9.0</Langversion>
+		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -17,7 +18,7 @@
 		<Title>NatsServer.Net</Title>
 		<PackageProjectUrl>https://github.com/niklasfp/dotnet-nats-server</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/niklasfp/dotnet-nats-server</RepositoryUrl>
-		<RepositoryType></RepositoryType>
+		<RepositoryType>git</RepositoryType>
 		<PackageTags>nats, nats.io, jetstream, messaging, pubsub</PackageTags>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

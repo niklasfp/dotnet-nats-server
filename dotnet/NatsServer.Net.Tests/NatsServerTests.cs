@@ -23,7 +23,7 @@ namespace NatsServer.Net.Tests
 
             ConnectionFactory cf = new ConnectionFactory();
             IConnection c = cf.CreateConnection("localhost:4222");
-
+            
             c.State.Should().Be(ConnState.CONNECTED);
             c.ConnectedId.Should().NotBeNull();
             server.Shutdown();
