@@ -64,7 +64,7 @@ func CreateServer(arguments *C.char, loggerFuncPtr C.loggerFunc) C.uintptr_t {
 		return 0
 	}
 
-	ns.SetLogger(&logWrapper{FunctionPointer: loggerFuncPtr}, false, false)
+	ns.SetLoggerV2(&logWrapper{FunctionPointer: loggerFuncPtr}, false, false, false)
 
 	handle := C.uintptr_t(cgo.NewHandle(ns))
 

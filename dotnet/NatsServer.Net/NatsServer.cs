@@ -42,26 +42,30 @@ namespace NatsServer.Net
         /// <summary>
         /// Starts the NATS server.
         /// </summary>
+        /// <exception cref="InvalidOperationException">If the server is already running.</exception>
+        /// <exception cref="NatsServerOptions">If the server could not be started.</exception>
         public void Start(CancellationToken stoppingToken = default)
         {
-            _logger.LogInformation("Starting server");
-            if (_serverPtr != 0)
+            if (_cancelSource != null)
             {
-                // TODO Error checking
-                NatsServerLib.StartServer(_serverPtr);
-
-                if (_serverPtr == 0)
-                {
-                    throw new NatsServerException("Failed to start NATS server, check log for details.");
-                }
-
-                _cancelSource = new CancellationTokenSource();
-                // _cancelSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-                // _cancelSource.Token.Register(Stop);
-
+                throw new InvalidOperationException("Server is already running.");
             }
             
-            // TODO: Raise here
+            _logger.LogInformation("Starting server");
+
+            // TODO Error checking
+            NatsServerLib.StartServer(_serverPtr);
+
+            if (_serverPtr == 0)
+            {
+                throw new NatsServerException("Failed to start NATS server, check log for details.");
+            }
+
+            _cancelSource = new CancellationTokenSource();
+            _cancelSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+            _cancelSource.Token.Register(Stop);
+
+            _logger.LogInformation("Server started");
         }
 
         /// <summary>
@@ -69,15 +73,20 @@ namespace NatsServer.Net
         /// </summary>
         public void Stop()
         {
-            _logger.LogInformation("Stopping server");
-            if (_serverPtr != 0)
+            if (_cancelSource == null)
             {
-                // TODO Error checking
-                NatsServerLib.ShutdownServer(_serverPtr);
-                
-                _cancelSource?.Dispose();
-                _cancelSource = null;
+                throw new InvalidOperationException("Server is not running.");
             }
+            
+            _logger.LogInformation("Stopping server");
+            
+            // TODO Error checking
+            NatsServerLib.ShutdownServer(_serverPtr);
+                
+            _logger.LogInformation("Server stopped");
+            
+            _cancelSource?.Dispose();
+            _cancelSource = null;
         }
 
         // A callback from native code with log messages.
@@ -105,22 +114,19 @@ namespace NatsServer.Net
 
         private void StopAndFree()
         {
-            if (_serverPtr != 0)
+            if (_cancelSource != null)
             {
                 Stop();
                 
                 NatsServerLib.FreeServer(_serverPtr);
             }
+            
+            _serverPtr = 0;
         }
 
         public void Dispose()
         {
             StopAndFree();
-                       
-            _serverPtr = 0;
-            _cancelSource?.Dispose();
-            _cancelSource = null;
-            
             GC.SuppressFinalize(this);
         }
 

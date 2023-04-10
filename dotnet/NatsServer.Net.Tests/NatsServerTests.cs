@@ -18,13 +18,16 @@ namespace NatsServer.Net.Tests
             var sut = sp.GetRequiredService<NatsServer>();
 
             sut.Start();
+            sut.IsRunning.Should().BeTrue();
 
             ConnectionFactory cf = new ConnectionFactory();
             IConnection c = cf.CreateConnection("localhost:4222");
 
             c.State.Should().Be(ConnState.CONNECTED);
             c.ConnectedId.Should().NotBeNull();
+
             sut.Stop();
+            sut.IsRunning.Should().BeFalse();
         }
 
         [Fact]
@@ -38,6 +41,8 @@ namespace NatsServer.Net.Tests
 
             sut.Start(cts.Token);
 
+            sut.IsRunning.Should().BeTrue();
+
             ConnectionFactory cf = new ConnectionFactory();
             IConnection c = cf.CreateConnection("localhost:4222");
 
@@ -46,7 +51,30 @@ namespace NatsServer.Net.Tests
 
             cts.Cancel();
 
-            c.State.Should().Be(ConnState.DISCONNECTED);
+            sut.IsRunning.Should().BeFalse();
+        }
+        
+        // Test that trying to stop a server that is not running throws an exception
+        [Fact]
+        public void ShouldThrowExceptionWhenStoppingServerThatIsNotRunning()
+        {
+            var sp = BuildServiceProvider();
+
+            var sut = sp.GetRequiredService<NatsServer>();
+
+            sut.Invoking(s => s.Stop()).Should().Throw<InvalidOperationException>();
+        }
+        
+        // Test that trying to start a server that is already running throws an exception
+        [Fact]
+        public void ShouldThrowExceptionWhenStartingServerThatIsAlreadyRunning()
+        {
+            var sp = BuildServiceProvider();
+
+            var sut = sp.GetRequiredService<NatsServer>();
+
+            sut.Start();
+            sut.Invoking(s => s.Start()).Should().Throw<InvalidOperationException>();
         }
 
         private IServiceProvider BuildServiceProvider()

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NATS.Client;
 using NatsServer.Net;
 
 var services = new ServiceCollection()
@@ -18,17 +17,13 @@ var services = new ServiceCollection()
 
 var server = services.GetRequiredService<NatsServer.Net.NatsServer>();
 
-server.Start();
-//
-// ConnectionFactory cf = new ConnectionFactory();
-// IConnection c = cf.CreateConnection("localhost:4222");
-//
-// var s = c.ServerInfo;
-// Console.WriteLine(s.Version);
+var cts = new CancellationTokenSource();
+server.Start(cts.Token);
 
+Console.WriteLine("Press <ENTER> to stop server...");
+Console.ReadLine();
+cts.Cancel();
 
 Console.WriteLine("Press <ENTER> to exit...");
-
 Console.ReadLine();
-server.Stop();
 
