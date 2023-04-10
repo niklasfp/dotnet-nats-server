@@ -9,7 +9,7 @@ var services = new ServiceCollection()
     .AddSingleton<NatsServer.Net.NatsServer>()
     .AddSingleton(new NatsServerOptions()
         {
-            Arguments = new List<string>()
+            Arguments = new[]
             {
                 "-js",
             }
@@ -18,13 +18,17 @@ var services = new ServiceCollection()
 
 var server = services.GetRequiredService<NatsServer.Net.NatsServer>();
 
-server.Start("nats.conf");
+server.Start();
+//
+// ConnectionFactory cf = new ConnectionFactory();
+// IConnection c = cf.CreateConnection("localhost:4222");
+//
+// var s = c.ServerInfo;
+// Console.WriteLine(s.Version);
 
-ConnectionFactory cf = new ConnectionFactory();
-IConnection c = cf.CreateConnection("localhost:4222");
-
-var s = c.ServerInfo;
-Console.WriteLine(s.Version);
 
 Console.WriteLine("Press <ENTER> to exit...");
+
 Console.ReadLine();
+server.Stop();
+

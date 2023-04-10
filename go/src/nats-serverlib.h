@@ -19,15 +19,9 @@ typedef struct { const char *p; ptrdiff_t n; } _GoString_;
 /* Start of preamble from import "C" comments.  */
 
 
-#line 4 "logWrapper.go"
- #include <stdlib.h>
- typedef void (*loggerFunc)(char* msg, int level);
- void bridge_logger(loggerFunc f, char*, int level);
-
-#line 1 "cgo-generated-wrapper"
-
 #line 4 "serverlib.go"
  #include <stdint.h> // for uintptr_t
+ typedef void (*loggerFunc)(char* msg, int level);
 
 #line 1 "cgo-generated-wrapper"
 
@@ -85,10 +79,10 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern void RegisterLogger(loggerFunc iFunctionPointer);
-extern uintptr_t CreateServer(char* arguments);
+extern uintptr_t CreateServer(char* arguments, loggerFunc loggerFuncPtr);
 extern GoInt StartServer(uintptr_t handle);
 extern GoInt ShutdownServer(uintptr_t handle);
+extern void FreeServer(uintptr_t handle);
 
 #ifdef __cplusplus
 }

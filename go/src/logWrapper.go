@@ -8,27 +8,9 @@ import (
 	"fmt"
 )
 import (
+	"log"
 	"unsafe"
 )
-
-var loggingFunctionPointer C.loggerFunc
-
-//export RegisterLogger
-func RegisterLogger(iFunctionPointer C.loggerFunc) {
-	loggingFunctionPointer = iFunctionPointer
-}
-
-func GlobalLogMessage(message string, level int32) {
-	if loggingFunctionPointer != nil {
-
-		cmsg := C.CString(message)
-
-		defer C.free(unsafe.Pointer(cmsg))
-
-		// this actually calls the registered C function pointer and logs
-		C.bridge_logger(loggingFunctionPointer, cmsg, C.int(level))
-	}
-}
 
 // Logs messages on the registered logger using dotnet log levels.
 type logWrapper struct {
@@ -60,20 +42,16 @@ func (lw *logWrapper) Errorf(format string, v ...interface{}) {
 }
 
 func (lw *logWrapper) LogMessage(message string, level int32) {
-	GlobalLogMessage(message, level)
 
-	// Temp, until loggers are per server instance
-	/*
-		if loggingFunctionPointer != nil {
+	if lw.FunctionPointer != nil {
 
-			cmsg := C.CString(message)
+		cmsg := C.CString(message)
+		defer C.free(unsafe.Pointer(cmsg))
 
-			defer C.free(unsafe.Pointer(cmsg))
+		// this actually calls the registered C function pointer and logs
+		C.bridge_logger(lw.FunctionPointer, cmsg, C.int(level))
 
-			log.Print(message)
-
-			// this actually calls the registered C function pointer and logs
-			C.bridge_logger(loggingFunctionPointer, cmsg, C.int(level))
-		}
-	*/
+	} else {
+		log.Printf("[%d] %s", level, message)
+	}
 }
