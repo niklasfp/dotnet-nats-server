@@ -22,7 +22,7 @@ server.Start(cts.Token);
 
 Console.WriteLine("Press <ENTER> to stop server...");
 Console.ReadLine();
-cts.Cancel();
+server.Dispose();
 
 Console.WriteLine("Press <ENTER> to exit...");
 Console.ReadLine();

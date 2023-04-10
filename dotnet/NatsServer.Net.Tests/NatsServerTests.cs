@@ -54,6 +54,21 @@ namespace NatsServer.Net.Tests
             sut.IsRunning.Should().BeFalse();
         }
         
+        // Test that disposing the server stops it
+        [Fact]
+        public void ShouldStopServerWhenDisposing()
+        {
+            var sp = BuildServiceProvider();
+
+            var sut = sp.GetRequiredService<NatsServer>();
+
+            sut.Start();
+            sut.IsRunning.Should().BeTrue();
+
+            sut.Dispose();
+            sut.IsRunning.Should().BeFalse();
+        }
+        
         // Test that trying to stop a server that is not running throws an exception
         [Fact]
         public void ShouldThrowExceptionWhenStoppingServerThatIsNotRunning()
